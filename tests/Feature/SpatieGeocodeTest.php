@@ -6,8 +6,10 @@ namespace Tests\Feature;
 
 use Faker\Factory;
 use Maarheeze\Geocode\Coordinates;
+use Maarheeze\Geocode\Exceptions\GeocodingFailed;
 use Maarheeze\Geocode\SpatieGeocode;
 use PHPUnit\Framework\TestCase;
+use Spatie\Geocoder\Exceptions\CouldNotGeocode;
 use Spatie\Geocoder\Geocoder;
 
 class SpatieGeocodeTest extends TestCase
@@ -67,5 +69,24 @@ class SpatieGeocodeTest extends TestCase
         $result = $service->getCoordinatesForAddress($address);
 
         $this->assertNull($result);
+    }
+
+    public function testWrapsGeocoderFailuresInGeocodingFailed(): void
+    {
+        $faker = Factory::create();
+
+        $address = $faker->city();
+
+        $geocoder = $this->createMock(Geocoder::class);
+        $geocoder->expects($this->once())
+            ->method('getCoordinatesForAddress')
+            ->with($address)
+            ->willThrowException(CouldNotGeocode::couldNotConnect());
+
+        $service = new SpatieGeocode($geocoder);
+
+        $this->expectException(GeocodingFailed::class);
+
+        $service->getCoordinatesForAddress($address);
     }
 }

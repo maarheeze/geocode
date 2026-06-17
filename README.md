@@ -63,6 +63,8 @@ echo $eindhoven->distanceTo($maarheeze)->asKilometers(); // e.g. 18.7
 
 Resolves an address to coordinates. Returns a `Coordinates` object on success, or `null` when the address can't be geocoded.
 
+Throws `Maarheeze\Geocode\Exceptions\GeocodingFailed` when the lookup itself fails—a transport error or an error returned by the geocoding service (e.g. an invalid API key or exceeded quota). A `null` result means "not found"; an exception means "could not look up".
+
 ### `Coordinates`
 
 A readonly value object holding the result:
