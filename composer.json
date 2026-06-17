@@ -1,0 +1,35 @@
+{
+    "name": "maarheeze/geocode",
+    "description": "addresses in, coordinates out — a tiny, typed geocoding wrapper",
+    "type": "library",
+    "license": "MIT",
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Maarheeze\\Geocode\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^8.3",
+        "guzzlehttp/guzzle": "^7.12",
+        "spatie/geocoder": "^4.0"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.24",
+        "maarheeze/phpcs": "^1.0",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^12"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
