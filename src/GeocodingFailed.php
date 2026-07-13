@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Maarheeze\Geocode\Exceptions;
+namespace Maarheeze\Geocode;
 
 use RuntimeException;
 

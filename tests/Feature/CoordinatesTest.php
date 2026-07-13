@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use Faker\Factory;
 use Maarheeze\Geocode\Coordinates;
-use PHPUnit\Framework\TestCase;
 
-class CoordinatesTest extends TestCase
+class CoordinatesTest extends FeatureTestCase
 {
     public function testCalculatesDistanceBetweenTwoPoints(): void
     {
@@ -20,9 +18,7 @@ class CoordinatesTest extends TestCase
 
     public function testDistanceToSelfIsZero(): void
     {
-        $faker = Factory::create();
-
-        $coordinates = new Coordinates($faker->latitude(), $faker->longitude());
+        $coordinates = new Coordinates($this->faker->latitude(), $this->faker->longitude());
 
         $this->assertSame(0.0, $coordinates->distanceTo($coordinates)->asMeters());
     }

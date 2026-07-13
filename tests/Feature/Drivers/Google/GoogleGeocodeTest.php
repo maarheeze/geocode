@@ -2,25 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature;
+namespace Tests\Feature\Drivers\Google;
 
-use Faker\Factory;
 use Maarheeze\Geocode\Coordinates;
-use Maarheeze\Geocode\Exceptions\GeocodingFailed;
-use Maarheeze\Geocode\SpatieGeocode;
-use PHPUnit\Framework\TestCase;
+use Maarheeze\Geocode\Drivers\Google\GoogleGeocode;
+use Maarheeze\Geocode\GeocodingFailed;
 use Spatie\Geocoder\Exceptions\CouldNotGeocode;
 use Spatie\Geocoder\Geocoder;
+use Tests\Feature\FeatureTestCase;
 
-class SpatieGeocodeTest extends TestCase
+class GoogleGeocodeTest extends FeatureTestCase
 {
     public function testReturnsCoordinatesForResolvedAddress(): void
     {
-        $faker = Factory::create();
-
-        $latitude = $faker->latitude();
-        $longitude = $faker->longitude();
-        $address = $faker->city();
+        $latitude = $this->faker->latitude();
+        $longitude = $this->faker->longitude();
+        $address = $this->faker->city();
 
         $geocoder = $this->createMock(Geocoder::class);
         $geocoder->expects($this->once())
@@ -29,16 +26,16 @@ class SpatieGeocodeTest extends TestCase
             ->willReturn([
                 'lat' => $latitude,
                 'lng' => $longitude,
-                'accuracy' => $faker->randomElement([
+                'accuracy' => $this->faker->randomElement([
                     'ROOFTOP',
                     'RANGE_INTERPOLATED',
                     'GEOMETRIC_CENTER',
                     'APPROXIMATE',
                 ]),
-                'formatted_address' => $faker->address(),
+                'formatted_address' => $this->faker->address(),
             ]);
 
-        $service = new SpatieGeocode($geocoder);
+        $service = new GoogleGeocode($geocoder);
 
         $result = $service->getCoordinatesForAddress($address);
 
@@ -49,22 +46,20 @@ class SpatieGeocodeTest extends TestCase
 
     public function testReturnsNullWhenAddressCannotBeResolved(): void
     {
-        $faker = Factory::create();
-
-        $address = $faker->city();
+        $address = $this->faker->city();
 
         $geocoder = $this->createMock(Geocoder::class);
         $geocoder->expects($this->once())
             ->method('getCoordinatesForAddress')
             ->with($address)
             ->willReturn([
-                'lat' => $faker->latitude(),
-                'lng' => $faker->longitude(),
+                'lat' => $this->faker->latitude(),
+                'lng' => $this->faker->longitude(),
                 'accuracy' => Geocoder::RESULT_NOT_FOUND,
                 'formatted_address' => Geocoder::RESULT_NOT_FOUND,
             ]);
 
-        $service = new SpatieGeocode($geocoder);
+        $service = new GoogleGeocode($geocoder);
 
         $result = $service->getCoordinatesForAddress($address);
 
@@ -73,17 +68,15 @@ class SpatieGeocodeTest extends TestCase
 
     public function testWrapsGeocoderFailuresInGeocodingFailed(): void
     {
-        $faker = Factory::create();
-
-        $address = $faker->city();
+        $address = $this->faker->city();
 
         $geocoder = $this->createMock(Geocoder::class);
         $geocoder->expects($this->once())
             ->method('getCoordinatesForAddress')
             ->with($address)
-            ->willThrowException(CouldNotGeocode::couldNotConnect());
+            ->willThrowException(new CouldNotGeocode('Could not connect to googleapis.com/maps/api'));
 
-        $service = new SpatieGeocode($geocoder);
+        $service = new GoogleGeocode($geocoder);
 
         $this->expectException(GeocodingFailed::class);
 

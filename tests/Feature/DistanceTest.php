@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use Faker\Factory;
 use Maarheeze\Geocode\Distance;
-use PHPUnit\Framework\TestCase;
 
-class DistanceTest extends TestCase
+class DistanceTest extends FeatureTestCase
 {
     public function testAsKilometersConvertsFromMeters(): void
     {
@@ -19,9 +17,7 @@ class DistanceTest extends TestCase
 
     public function testAsMetersReturnsTheGivenValue(): void
     {
-        $faker = Factory::create();
-
-        $meters = $faker->randomFloat();
+        $meters = $this->faker->randomFloat();
 
         $distance = new Distance($meters);
 
